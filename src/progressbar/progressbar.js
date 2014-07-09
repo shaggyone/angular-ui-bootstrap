@@ -10,7 +10,21 @@ angular.module('ui.bootstrap.progressbar', [])
         animate = angular.isDefined($attrs.animate) ? $scope.$parent.$eval($attrs.animate) : progressConfig.animate;
 
     this.bars = [];
-    $scope.max = angular.isDefined($attrs.max) ? $scope.$parent.$eval($attrs.max) : progressConfig.max;
+
+    this.updateBar = function(bar) {
+        bar.percent = +(100 * bar.value / $scope.max).toFixed(2);
+    }
+
+    if (angular.isDefined($attrs.max)) {
+        $scope.$parent.$watch($attrs.max, function (new_value) {
+            $scope.max = new_value;
+            for (i=0; i<self.bars.length; i++) {
+                self.updateBar(self.bars[i]);
+            }
+        });
+    } else {
+        $scope.max = progressConfig.max;
+    }
 
     this.addBar = function(bar, element) {
         if ( !animate ) {
@@ -20,7 +34,8 @@ angular.module('ui.bootstrap.progressbar', [])
         this.bars.push(bar);
 
         bar.$watch('value', function( value ) {
-            bar.percent = +(100 * value / $scope.max).toFixed(2);
+            bar.value = value;
+            self.updateBar(bar);
         });
 
         bar.$on('$destroy', function() {
