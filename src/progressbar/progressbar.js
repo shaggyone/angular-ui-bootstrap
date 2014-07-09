@@ -13,7 +13,7 @@ angular.module('ui.bootstrap.progressbar', [])
 
     this.updateBar = function(bar) {
         bar.percent = +(100 * bar.value / $scope.max).toFixed(2);
-    }
+    };
 
     if (angular.isDefined($attrs.max)) {
         $scope.$parent.$watch($attrs.max, function (new_value) {

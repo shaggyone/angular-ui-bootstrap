@@ -5,8 +5,9 @@ describe('progressbar directive', function () {
   beforeEach(inject(function(_$compile_, _$rootScope_) {
     $compile = _$compile_;
     $rootScope = _$rootScope_;
+    $rootScope.max   = 100;
     $rootScope.value = 22;
-    element = $compile('<progressbar animate="false" value="value">{{value}} %</progressbar>')($rootScope);
+    element = $compile('<progressbar animate="false" value="value" max="max">{{value}} %</progressbar>')($rootScope);
     $rootScope.$digest();
   }));
 
@@ -63,6 +64,19 @@ describe('progressbar directive', function () {
       expect(bar.attr('aria-valuemax')).toBe('100');
       expect(bar.attr('aria-valuenow')).toBe('60');
       expect(bar.attr('aria-valuetext')).toBe('60%');
+    });
+
+  it('adjusts the "bar" width and aria when max value changes', function() {
+      $rootScope.max = 200;
+      $rootScope.$digest();
+
+      var bar = getBar(0);
+      expect(bar.css('width')).toBe('11%');
+
+      expect(bar.attr('aria-valuemin')).toBe('0');
+      expect(bar.attr('aria-valuemax')).toBe('200');
+      expect(bar.attr('aria-valuenow')).toBe('22');
+      expect(bar.attr('aria-valuetext')).toBe('11%');
     });
 
   it('allows fractional "bar" width values, rounded to two places', function () {
